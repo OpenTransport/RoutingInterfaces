@@ -1,0 +1,103 @@
+message Error {
+    enum ErrorId {
+      ITINERARY_FOUND = 1;
+      DATE_OUT_OF_BOUNDS = 2;
+      NO_ORIGIN_POINT = 3;
+      NO_DESTINATION_POINT = 4;
+      NO_ORIGIN_NOR_DESTINATION_POINT = 5;
+      NO_SOLUTION = 7;
+      UNKNOWN_URI = 10;
+      SERVICE_UNAVAILABLE = 11;
+      CORRUPTED_REQUEST = 12;
+    }
+    optional ErrorId id = 1;
+    optional string detailed_message = 2;
+}
+
+enum SectionType {
+    PUBLIC_TRANSPORT = 1;
+    STREET_NETWORK = 2;
+    WAITING = 3;
+    TRANSFER = 4;
+    // Airplanes, ferries, border control for eurostar…
+    // Time to get from the station to the vehicle
+    BOARDING = 6;
+    LANDING = 7;
+    // Bicycle share system
+    BSS_RENT = 8;
+    BSS_PUT_BACK = 9;
+}
+
+enum TransferType {
+    WALKING = 1;
+    GUARANTEED = 2;
+    // Interlining
+    STAY_IN = 3;
+}
+
+message PathItem {
+    optional string name = 1;
+    optional double length = 2;
+    optional int32 direction = 3;
+    optional double duration = 4;
+}
+
+enum StreetNetworkMode {
+    WALK = 0;
+    BIKE = 1;
+    CAR = 3;
+    BIKE_SHARE = 4;
+    // Car sharing?
+    // Various car modes: park’n’ride kiss’n’ride…
+}
+
+message StreetNetwork {
+    optional StreetNetworkMode mode = 3;
+    repeated PathItem path_items = 4;
+}
+
+// Leg? Look at transmodel
+message Section {
+    optional SectionType type = 1;
+    optional Place origin = 2;
+    optional Place destination = 3;
+
+    optional VehicleJourney vehicle_journey = 9;
+
+    optional StreetNetwork street_network = 12;
+
+    optional TransferType transfer_type = 13;
+
+    repeated GeographicalCoord polyline = 14;
+    optional int32 duration = 15;
+
+    // Timezones?
+    optional int32 begin_date_time = 16;
+    optional int32 end_date_time = 17;
+
+    optional int32 length = 19;
+
+    // Can be used for fare computation
+    optional string id = 20;
+}
+
+
+
+message Journey {
+    optional int32 nb_transfers = 2;
+
+    // Timezones?
+    optional int32 departure_date_time = 3;
+    optional int32 arrival_date_time = 4;
+
+    repeated Section sections = 6;
+    optional Place origin = 7;
+    optional Place destination = 8;
+}
+
+message Response {
+    required API requested_api = 1;
+    optional Error error = 2;
+
+    repeated Journey journey_response = 3;
+}

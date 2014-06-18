@@ -1,0 +1,14 @@
+message JourneysRequest {
+    required string origin = 1;
+    optional string destination = 2;
+    repeated string datetimes = 3;
+    required bool clockwise = 4;
+    repeated string forbidden_uris = 5;
+    required int32 max_duration = 6;
+    required int32 max_transfers = 7;
+    optional StreetNetworkParams streetnetwork_params = 8;
+    required bool wheelchair = 9;
+    required bool disruption_active = 10;
+    optional bool show_codes = 11;
+    optional bool allow_odt = 12;
+}
