@@ -14,6 +14,11 @@ message Error {
     optional string detailed_message = 2;
 }
 
+message GeographicalCoord {
+    required double lon = 1;
+    required double lat = 2;
+}
+
 enum SectionType {
     PUBLIC_TRANSPORT = 1;
     STREET_NETWORK = 2;
@@ -33,6 +38,32 @@ enum TransferType {
     GUARANTEED = 2;
     // Interlining
     STAY_IN = 3;
+}
+
+enum VehicleJourneyType{
+    regular = 0;                 // ligne régulière
+    virtual_with_stop_time = 1;       // TAD virtuel avec horaires
+    virtual_without_stop_time = 2;    // TAD virtuel sans horaires
+    stop_point_to_stop_point = 3;     // TAD rabattement arrêt à arrêt
+    address_to_stop_point = 4;         // TAD rabattement adresse à arrêt
+    odt_point_to_point = 5;           // TAD point à point (Commune à Commune)
+
+    //regular = 0;
+    //odt_with_stop_time = 1;
+    //odt_with_zone = 2;
+}
+
+message StopPoint {
+    optional string name = 3;
+    optional string uri = 5;
+    optional GeographicalCoord coord = 6;
+    optional string platform_code = 14;
+}
+
+message Place {
+    required string name = 1;
+    required string uri = 2;
+    optional StopPoint stop_point = 6;
 }
 
 message PathItem {
@@ -95,9 +126,71 @@ message Journey {
     optional Place destination = 8;
 }
 
+message JourneyPattern {
+    optional string name = 3;
+    optional string uri = 4;
+    optional bool is_frequence = 5;
+    optional PhysicalMode physical_mode = 6;
+    optional Route route = 7;
+
+    repeated JourneyPatternPoint journey_pattern_points = 8;
+}
+
+message JourneyPatternPoint{
+    optional string uri = 3;
+    optional int32 order = 4;
+    optional StopPoint stop_point = 5;
+    optional JourneyPattern journey_pattern = 6;
+}
+
 message Response {
-    required API requested_api = 1;
+//  required API requested_api = 1;
     optional Error error = 2;
 
     repeated Journey journey_response = 3;
+}
+
+message PhysicalMode {
+    optional string uri = 3;
+    optional string name = 4;
+    repeated CommercialMode commercial_modes = 5;
+}
+
+message CommercialMode {
+    optional string uri = 3;
+    optional string name = 4;
+    repeated PhysicalMode physical_modes = 5;
+}
+
+message Line {
+    optional string name = 3;
+    optional string uri = 4;
+    optional string code = 5;
+    optional string color = 9;
+    repeated Route routes = 10;
+    optional CommercialMode commercial_mode = 11;
+    repeated PhysicalMode physical_mode = 12;
+}
+
+message Route {
+    optional string name = 3;
+    optional string uri = 4;
+    optional bool is_frequence = 5;
+    optional Line line = 7;
+    repeated JourneyPattern journey_patterns = 8;
+}
+
+message StopTime {
+    optional string arrival_time = 1;
+    optional string departure_time = 3;
+    optional VehicleJourney vehicle_journey = 4;
+    optional JourneyPatternPoint journey_pattern_point = 5;
+    optional bool pickup_allowed = 6;
+    optional bool drop_off_allowed = 7;
+}
+message VehicleJourney {
+    optional string name = 3;
+    optional string uri = 4;
+    repeated StopTime stop_times = 6;
+    optional JourneyPattern journey_pattern = 8;
 }
