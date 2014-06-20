@@ -1,3 +1,30 @@
+enum StreetNetworkMode {
+    WALK = 0;
+    BIKE = 1;
+    CAR = 3;
+    BIKE_SHARE = 4;
+    // Car sharing?
+    // Various car modes: park’n’ride kiss’n’ride…
+}
+
+
+message StreetNetworkParams{
+    optional StreetNetworkMode origin_mode         = 1;
+    optional StreetNetworkMode destination_mode    = 2;
+    optional int32 max_duration_to_pt   = 4;
+    optional double walking_speed       = 3;
+    optional double bike_speed          = 5;
+    optional double car_speed           = 7;
+    optional double bss_speed           = 9;
+    // Speed sounds ambigious, do you mean:
+    // 1) slower speak because the bicycle is fragile
+    // 2) extra time to park or fetch the bicycle
+    optional string origin_filter       = 11;
+    optional string destination_filter  = 12;
+    // What are these filters?
+}
+
+
 message JourneysRequest {
     required string origin = 1;
     optional string destination = 2;
